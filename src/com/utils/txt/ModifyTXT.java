@@ -7,63 +7,47 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Map;
+
+import com.utils.xml.XmlUtils;
 
 public class ModifyTXT {
-
+ 
 	public static void main(String[] args) {
-		/*String path = "C:\\Users\\Administrator\\workspace\\hecsp_ssm\\web-component\\gw-ec-set";		//Òª±éÀúµÄÂ·¾¶
-		//String path = "C:\\Users\\Administrator\\workspace\\hecsp_ssm\\web-component\\gw-ec-set\\src\\main\\java\\com\\bjgoodwill\\set\\controller";
+		System.out.println("---------æ‰§è¡Œå¼€å§‹-----------");
+		String path = "D:\\Workspaces\\aa";	//è¦éå†çš„è·¯å¾„
 		List<File> fileList = new ArrayList<>();
-		getFileList(fileList,path);
+		Map<String,String> urlMap = new HashMap<>();
+		getFileList(fileList,path,"struts.xml");
 		for (File file : fileList) {
-			System.out.println(file.getAbsolutePath());
+			XmlUtils.handleXML(file, urlMap);
+		}
+		System.out.println(urlMap.toString());
+		
+		/*getFileList(fileList,path,"Action.java");
+		for (File file : fileList) {
+			updadeTxt(file);
 		}*/
-		
-		
-		
-		 // ´´½¨Ò»¸öÕıÔò±í´ïÊ½Ä£Ê½£¬ÓÃÒÔÆ¥ÅäÒ»¸öµ¥´Ê£¨\b=µ¥´Ê±ß½ç£©
-		  String patt = "\\bfavor\\b";
-		  // ÓÃÓÚ²âÊÔµÄÊäÈë×Ö·û´®
-		  String input = "Do me a favor? Fetch my favorites.AAA favor BBB";
-		  System.out.println("Input:" + input);
-		  // ´ÓÕıÔò±í´ïÊ½ÊµÀıÖĞÔËĞĞ·½·¨²¢²é¿´ÆäÈçºÎÔËĞĞ
-		  Pattern r = Pattern.compile(patt);
-		  Matcher m = r.matcher(input);
-		  System.out.println("ReplaceAll:" + m.replaceAll("favour"));
-		  // appendReplacement·½·¨
-		  m.reset();
-		  StringBuffer sb = new StringBuffer();
-		  while (m.find()) {
-		   // ½«Æ¥ÅäÖ®Ç°µÄ×Ö·û´®¸´ÖÆµ½sb,ÔÙ½«Æ¥Åä½á¹ûÌæ»»Îª£º"favour"£¬²¢×·¼Óµ½sb
-		   m.appendReplacement(sb, "favour");
-		  }
-		  System.out.println(sb.toString());
-		  m.appendTail(sb);
-		  System.out.println(sb.toString());
-		/*
-		Êä³ö£º
-		 
-		Input:Do me a favor? Fetch my favorites.AAA favor BBB
-		ReplaceAll:Do me a favour? Fetch my favorites.AAA favour BBB
-		Do me a favour? Fetch my favorites.AAA favour
-		Do me a favour? Fetch my favorites.AAA favour BBB
-		*/
-		
-		
+		System.out.println("---------æ‰§è¡Œç»“æŸ-----------");
 	}
-
-	public static void getFileList(List<File> filelist,String path) {
+	
+	
+	/**
+	 * éå†æ–‡ä»¶ç›®å½•
+	 * @param filelist
+	 * @param path
+	 */
+	public static void getFileList(List<File> filelist,String path,String reg) {
         File dir = new File(path);
-        File[] files = dir.listFiles(); // ¸ÃÎÄ¼şÄ¿Â¼ÏÂÎÄ¼şÈ«²¿·ÅÈëÊı×é
+        File[] files = dir.listFiles(); // è¯¥æ–‡ä»¶ç›®å½•ä¸‹æ–‡ä»¶å…¨éƒ¨æ”¾å…¥æ•°ç»„
         if (files != null) {
             for (int i = 0; i < files.length; i++) {
                 String fileName = files[i].getName();
-                if (files[i].isDirectory()) { // ÅĞ¶ÏÊÇÎÄ¼ş»¹ÊÇÎÄ¼ş¼Ğ
-                    getFileList(filelist,files[i].getAbsolutePath()); // »ñÈ¡ÎÄ¼ş¾ø¶ÔÂ·¾¶
-                } else if (fileName.endsWith("Action.java")) { // ÅĞ¶ÏÎÄ¼şÃûÊÇ·ñÒÔAction.java½áÎ²
+                if (files[i].isDirectory()) { // åˆ¤æ–­æ˜¯æ–‡ä»¶è¿˜æ˜¯æ–‡ä»¶å¤¹
+                    getFileList(filelist,files[i].getAbsolutePath(),reg); // è·å–æ–‡ä»¶ç»å¯¹è·¯å¾„
+                } else if (fileName.indexOf(reg)>0) { // åˆ¤æ–­æ–‡ä»¶åæ˜¯å¦ä»¥regç»“å°¾
                     filelist.add(files[i]);
                 } else {
                     continue;
@@ -73,42 +57,83 @@ public class ModifyTXT {
         }
     }
 	
+	/**
+	 * ä¿®æ”¹è¡Œ
+	 * @param file
+	 */
 	public static void updadeTxt(File file){
+		BufferedReader reader = null;
+		OutputStreamWriter osw = null;
 		try {
-			//´ò¿ªÎÄ¼ş
-			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file),"utf-8"));
-			//ÄÚ´æÁ÷
-	       // CharArrayWriter caw=new CharArrayWriter();
+			//æ‰“å¼€æ–‡ä»¶
+			reader = new BufferedReader(new InputStreamReader(new FileInputStream(file),"utf-8"));
+			//å†…å­˜æµ
 	        StringBuffer buffer = new StringBuffer();
 			String line = null;
-			String n = "";
-			//°´ĞĞ¶ÁÈ¡ÎÄ¼ş
+			//æŒ‰è¡Œè¯»å–æ–‡ä»¶
 			while ((line = reader.readLine()) != null) {
-				//ÅĞ¶Ï¸ÄĞĞÊı¾İÊÇ·ñ°üº¬123
-				if(line.length()>0) {
-					if(line.indexOf("extends")>0) {
-						buffer.append(line);
-						buffer.append(System.getProperty("line.separator"));
-						//caw.write(line);
-						//caw.append(System.getProperty("line.separator"));
-						n = "";
-					}
+				//åˆ¤æ–­æ”¹è¡Œæ•°æ®æ˜¯å¦åŒ…å«123
+				String trim = line.trim();
+				if(trim.length()>0) {
+					updateDetail(buffer, trim);
 				}
 			}
-			reader.close();
-			
-			//FileWriter fw = new FileWriter("C:\\Users\\Administrator\\Desktop\\11.txt");
-			//new OutputStreamWriter(new OutputStream)
-			//caw.writeTo(fw);
-			//fw.write(buffer.toString());
-			//fw.close();
-			
-            OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream("C:\\Users\\Administrator\\Desktop\\11.txt"));
+            osw = new OutputStreamWriter(new FileOutputStream(file.getAbsolutePath().replace("Action", "Controller")));
             osw.write(buffer.toString());
             osw.flush();
-            osw.close();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			try {
+				if(reader!=null) {
+					reader.close();
+				}
+				if(osw!=null) {
+					osw.close();
+				}
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
 		}
+	}
+	
+	
+	public static void updateDetail(StringBuffer buffer,String line){
+		if (line.contains("PageAction")) {
+			addDetail(buffer, "@Controller");
+			addDetail(buffer, "@RequestMapping(value=\"/omp\")");
+			addDetail(buffer, "@Scope(value=\"prototype\")");
+			line.replace("PageAction", "PageController");
+		}else if(line.startsWith("private") && line.endsWith("Service;")) {
+			addDetail(buffer, "@Autowired");
+		}else if(line.startsWith("public String") && line.contains("(") && !line.contains("get")) {
+			addDetail(buffer, "@ResponseBody");
+			addDetail(buffer, "@PostMapping(value = \"/querylist_globalpar\")");
+			if(line.contains("querylist")) {
+				line.replace("()", "(String data,int pagesize,int pagerow,String sort,String dir)");
+			}else {
+				line.replace("()", "(String data)");
+			}
+		}else if(line.contains("setClass")) {
+			line.replace("(", "(data,");
+		}else if(line.contains("this.getPagesize()")) {
+			line.replace("this.getPagesize()", "pagesize");
+		}else if(line.contains("this.getPagerow()")) {
+			line.replace("this.getPagerow()", "pagerow");
+		}else if(line.contains("this.getSort()")) {
+			line.replace("this.getSort()", "sort");
+		}else if(line.contains("this.getDir()")) {
+			line.replace("this.getDir()", "dir");
+		}else if(line.contains("setTotalpage")) {
+			//addDetail(buffer, line);
+		}else if(line.contains("\"success\"")) {
+			line.replace("\"success\"", "success()");
+		}
+		addDetail(buffer, line);
+	}
+	
+	public static void addDetail(StringBuffer buffer,String line){
+		buffer.append(line);
+		buffer.append(System.getProperty("line.separator"));
 	}
 }

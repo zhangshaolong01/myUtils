@@ -12,15 +12,9 @@ public class RegUtils {
 	}
 
 	/**
-	 * <strong>É¾³ı×Ö·û´®ÖĞµÄ¿Õ¸ñ¡¢»»ĞĞ·û¡¢Tab</strong><br>
+	 * <strong>åˆ é™¤å­—ç¬¦ä¸²ä¸­çš„ç©ºæ ¼ã€æ¢è¡Œç¬¦ã€Tab</strong><br>
 	 * <br>
-	 * 
-	 * @author Aaron.ffp
-	 * @version V1.0.0: autotest-base cn.ffp.autotest.base.util RegUtils.java
-	 *          replaceSpace, 2016-03-03 13:13:00.083 Exp $
-	 * 
-	 * @param str
-	 *            ĞèÒªÉ¾³ı¿Õ¸ñ¡¢»»ĞĞ·û¡¢TabµÄÔ´×Ö·û´®
+	 * éœ€è¦åˆ é™¤ç©ºæ ¼ã€æ¢è¡Œç¬¦ã€Tabçš„æºå­—ç¬¦ä¸²
 	 * 
 	 * @return String
 	 */
@@ -29,9 +23,9 @@ public class RegUtils {
 	}
 
 	/**
-	 * <strong>×Ö·û´®Ìæ»»</strong><br>
+	 * <strong>å­—ç¬¦ä¸²æ›¿æ¢</strong><br>
 	 * <ul>
-	 * <li>Í¨¹ıÕıÔò±í´ïÊ½Æ¥Åä£¬Æ¥ÅäµÄ²¿·Ö½«±»Ìæ»»</li>
+	 * <li>é€šè¿‡æ­£åˆ™è¡¨è¾¾å¼åŒ¹é…ï¼ŒåŒ¹é…çš„éƒ¨åˆ†å°†è¢«æ›¿æ¢</li>
 	 * </ul>
 	 * <br>
 	 * 
@@ -40,30 +34,28 @@ public class RegUtils {
 	 *          replace, 2016-01-14 00:13:56.657 Exp $
 	 * 
 	 * @param str
-	 *            ĞèÒªÌæ»»µÄÔ´×Ö·û´®
+	 *            éœ€è¦æ›¿æ¢çš„æºå­—ç¬¦ä¸²
 	 * @param reg
-	 *            ÕıÔò±í´ïÊ½£¬Æ¥ÅäĞèÒª±»Ìæ»»µÄ²¿·Ö
+	 *            æ­£åˆ™è¡¨è¾¾å¼ï¼ŒåŒ¹é…éœ€è¦è¢«æ›¿æ¢çš„éƒ¨åˆ†
 	 * @param replacement
-	 *            Ìæ»»ºóµÄ×Ö·û´®
+	 *            æ›¿æ¢åçš„å­—ç¬¦ä¸²
 	 * @return String
 	 */
 	public static String replace(String str, String reg, String replacement) {
 		String strReplace = "";
-
 		try {
 			Pattern pattern = Pattern.compile(reg);
 			Matcher matcher = pattern.matcher(str);
 			strReplace = matcher.replaceAll(replacement);
 		} catch (PatternSyntaxException pse) {
 		}
-
 		return strReplace;
 	}
 
 	/**
-	 * <strong>ÅĞ¶Á×Ö·û´®ÊÇ·ñ·ûºÏÕıÔò±í´ïÊ½</strong><br>
+	 * <strong>åˆ¤è¯»å­—ç¬¦ä¸²æ˜¯å¦ç¬¦åˆæ­£åˆ™è¡¨è¾¾å¼</strong><br>
 	 * <ul>
-	 * <li>Èô·ûºÏÕıÔò±í´ïÊ½£¬Ôò·µ»Ø true</li>
+	 * <li>è‹¥ç¬¦åˆæ­£åˆ™è¡¨è¾¾å¼ï¼Œåˆ™è¿”å› true</li>
 	 * </ul>
 	 * <br>
 	 * 
@@ -72,14 +64,13 @@ public class RegUtils {
 	 *          2015-12-27 23:30:35.064 Exp $
 	 * 
 	 * @param str
-	 *            Ô´×Ö·û´®
+	 *            æºå­—ç¬¦ä¸²
 	 * @param reg
-	 *            ÕıÔò±í´ïÊ½
+	 *            æ­£åˆ™è¡¨è¾¾å¼
 	 * @return boolean
 	 */
 	public static boolean reg(String str, String reg) {
 		boolean match = false;
-
 		try {
 			Pattern pattern = Pattern.compile(reg);
 			Matcher matcher = pattern.matcher(str);
