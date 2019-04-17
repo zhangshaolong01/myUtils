@@ -48,8 +48,7 @@ public class M3U8Utils {
 			tfile.mkdirs();
 		}
 
-		/**
-		M3U8 m3u8ByURL = getM3U8ByURL(s1);
+		M3U8 m3u8ByURL = getTSByURL(s1);
 		String basePath = m3u8ByURL.getBasepath();
 		m3u8ByURL.getTsList().stream().parallel().forEach(m3U8Ts -> {
 			String path = m3U8Ts.getFile();
@@ -91,11 +90,61 @@ public class M3U8Utils {
 			}
 		});
 		System.out.println("文件下载完毕!");
-		*/
+
 		mergeFiles(tfile.listFiles(), "test.ts");
 	}
 	
-	public static M3U8 getM3U8ByURL(String m3u8URL) {
+	public static M3U8 getM3U8ByURL(String URL) {
+		try {
+			HttpURLConnection conn = (HttpURLConnection) new URL(URL).openConnection();
+			if (conn.getResponseCode() == 200) {
+				String realUrl = conn.getURL().toString();
+				BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+				String basepath = realUrl.substring(0, realUrl.lastIndexOf("/") + 1);
+				M3U8 ret = new M3U8();
+				ret.setBasepath(basepath);
+
+				String line;
+				float seconds = 0;
+				int mIndex;
+				while ((line = reader.readLine()) != null) {
+					if (line.startsWith("#")) {
+						if (line.startsWith("#EXTINF:")) {
+							line = line.substring(8);
+							if ((mIndex = line.indexOf(",")) != -1) {
+								line = line.substring(0, mIndex + 1);
+							}
+							try {
+								seconds = Float.parseFloat(line);
+							} catch (Exception e) {
+								seconds = 0;
+							}
+						}
+						continue;
+					}
+					if (line.endsWith("m3u8")) {
+						return getM3U8ByURL(basepath + line);
+					}
+					ret.addTs(new M3U8.Ts(line, seconds));
+					seconds = 0;
+				}
+				reader.close();
+
+				return ret;
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * 取ts列表
+	 * @param m3u8URL
+	 * @return
+	 */
+	public static M3U8 getTSByURL(String m3u8URL) {
 		try {
 			HttpURLConnection conn = (HttpURLConnection) new URL(m3u8URL).openConnection();
 			if (conn.getResponseCode() == 200) {
@@ -140,6 +189,12 @@ public class M3U8Utils {
 		return null;
 	}
 	
+	/**
+	 * 	文件合并
+	 * @param fpaths 待合并文件列表
+	 * @param resultPath  合并后名字
+	 * @return
+	 */
 	public static boolean mergeFiles(File[] fpaths, String resultPath) {
 		if (fpaths == null || fpaths.length < 1) {
 			return false;
