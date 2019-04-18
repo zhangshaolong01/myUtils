@@ -26,8 +26,7 @@ public class HandleActionTool {
         System.out.println("---开始处理Controller转换");
         for (int i = 0; i < actionFileList.size(); i++) {
             if (i != 1) {
-                continue;
-            }
+                continue;            }
             createController(actionFileList.get(i));
         }
 
