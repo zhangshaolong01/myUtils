@@ -5,7 +5,6 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 public class RegUtils {
-	private static String msg = "";
 	private static String regRepSpace = "\\s*|\t|\r|\n";
 
 	public RegUtils() {
@@ -33,12 +32,9 @@ public class RegUtils {
 	 * @version V1.0.0: autotest-base cn.ffp.autotest.base.util RegUtils.java
 	 *          replace, 2016-01-14 00:13:56.657 Exp $
 	 * 
-	 * @param str
-	 *            需要替换的源字符串
-	 * @param reg
-	 *            正则表达式，匹配需要被替换的部分
-	 * @param replacement
-	 *            替换后的字符串
+	 * @param str         需要替换的源字符串
+	 * @param reg         正则表达式，匹配需要被替换的部分
+	 * @param replacement 替换后的字符串
 	 * @return String
 	 */
 	public static String replace(String str, String reg, String replacement) {
@@ -63,10 +59,8 @@ public class RegUtils {
 	 * @version V1.0.0: autotest-base cn.ffp.autotest.base.util RegUtils.java reg,
 	 *          2015-12-27 23:30:35.064 Exp $
 	 * 
-	 * @param str
-	 *            源字符串
-	 * @param reg
-	 *            正则表达式
+	 * @param str 源字符串
+	 * @param reg 正则表达式
 	 * @return boolean
 	 */
 	public static boolean reg(String str, String reg) {
