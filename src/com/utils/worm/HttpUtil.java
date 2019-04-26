@@ -13,7 +13,9 @@ public class HttpUtil {
 	private static int num = 0;
 
 	static {
-		okHttpClient = new OkHttpClient.Builder().readTimeout(1, TimeUnit.SECONDS).connectTimeout(1, TimeUnit.SECONDS)
+		okHttpClient = new OkHttpClient.Builder()
+				.readTimeout(1, TimeUnit.SECONDS)
+				.connectTimeout(1, TimeUnit.SECONDS)
 				.build();
 	}
 
@@ -31,5 +33,12 @@ public class HttpUtil {
 			System.out.println("链接格式有误:" + path);
 		}
 		return null;
+	}
+	
+	
+	public static void main(String[] args) {
+		String path = "https://edu.51cto.com/center/course/lesson/index?id=370719";
+		
+		System.out.println(get(path));
 	}
 }

@@ -14,7 +14,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class Spider {
-	public static String path = "http://www.yada.com.cn/"; // 雅达公司官网
+	//public static String path = "http://www.yada.com.cn/"; // 雅达公司官网
+	public static String path = "https://edu.51cto.com/center/course/lesson/index?id=370719";
 	public static int num = -1, sum = 0;
 	/**
 	 * 定义四个文件类（链接存储，图片储存，文件存储，错误链接存储）
@@ -80,7 +81,7 @@ public class Spider {
 		}
 		num++;
 		if (sum > num) {
-			getAllLinks(getFileLine(aLinkFile, num));
+			//getAllLinks(getFileLine(aLinkFile, num));
 		}
 	}
 
