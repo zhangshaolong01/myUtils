@@ -4,8 +4,10 @@ import java.awt.AWTException;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.PointerInfo;
+import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
+import java.awt.image.BufferedImage;
 
 import org.apache.commons.lang3.RandomUtils;
 /**
@@ -145,5 +147,20 @@ public class RobotUtils {
 		}else {
 			return false;
 		}
+	}
+	
+	
+	/**
+	 * 截图
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @return
+	 * @throws Exception
+	 */
+	public static BufferedImage captureScreen(int x, int y, int width, int height) throws Exception {
+		Rectangle screenRectangle = new Rectangle(x,y,width,height);
+		return robot.createScreenCapture(screenRectangle);
 	}
 }

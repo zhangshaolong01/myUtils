@@ -55,7 +55,7 @@ public class FileDigest {
 		if (!file.isDirectory()) {
 			return null;
 		}
-//<filepath,md5>
+		//<filepath,md5>
 		Map<String, String> map = new HashMap<String, String>();
 		String md5;
 		File files[] = file.listFiles();
