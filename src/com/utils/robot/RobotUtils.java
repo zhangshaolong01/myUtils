@@ -8,7 +8,11 @@ import java.awt.Robot;
 import java.awt.event.InputEvent;
 
 import org.apache.commons.lang3.RandomUtils;
-
+/**
+ * wow 助手
+ * @author zhangshaolong
+ *
+ */
 public class RobotUtils {
 	
 	private static Robot robot;
@@ -26,7 +30,7 @@ public class RobotUtils {
 	}
 
 	public static void main(String[] args) throws AWTException {
-		setMouseWheel();
+		setPetAnimal();
 	}
 	
 	/**
@@ -36,19 +40,22 @@ public class RobotUtils {
 	 *          对应宠物字符串的自动化操作
 	 * @throws AWTException 
 	 */
-	static void setMouseWheel() throws AWTException{
+	static void setPetAnimal() throws AWTException{
 		getInstance();
 		//睡眠一段时间/毫秒
 		robot.delay(3000);
 		
 		boolean flag = true;
 		while(true) {
-			if(isInArea(1, 1, 2000, 2000)) {
+			if(isInArea(1000, 400, 400, 400)) {
+				//点击选择
 				mousePressLeft();
 				flag = flag?false:true;
 				if(flag) {
+					//前滚一步
 					robot.mouseWheel(1);
 				}else {
+					//后滚一步
 					robot.mouseWheel(-1);
 				}
 			}
@@ -56,6 +63,33 @@ public class RobotUtils {
 		}
 	}
 	
+	
+	/**
+	 * 钓鱼
+	 * @throws AWTException
+	 */
+	static void setFishing() throws AWTException{
+		getInstance();
+		//睡眠一段时间/毫秒
+		robot.delay(3000);
+		
+		while(true) {
+			if(isInArea(1000, 400, 400, 400)) {
+				//点击选择
+				mousePressLeft();
+				
+				//前滚一步,甩鱼竿
+				robot.mouseWheel(1);
+				
+				//是否有鱼上钩
+					//移到鱼鳔位置
+					mouseMove(500,200);
+						//右键点击自动拾取
+						mousePressRight();
+			}
+			robot.delay(RandomUtils.nextInt(1500, 3000));
+		}
+	}
 	
 	/**
 	 * 按左键
@@ -107,10 +141,8 @@ public class RobotUtils {
 		PointerInfo pointerInfo = MouseInfo.getPointerInfo();
 		Point point = pointerInfo.getLocation();
 		if(x < point.x && point.x < (x + width) && y < point.y && point.y < (y + height)) {
-				System.out.println(true);
 				return true;
 		}else {
-			System.out.println(false);
 			return false;
 		}
 	}
