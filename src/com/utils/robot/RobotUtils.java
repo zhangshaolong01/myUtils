@@ -8,6 +8,9 @@ import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
+
+import javax.imageio.ImageIO;
 
 import org.apache.commons.lang3.RandomUtils;
 /**
@@ -31,8 +34,15 @@ public class RobotUtils {
 		return robot;
 	}
 
-	public static void main(String[] args) throws AWTException {
-		setPetAnimal();
+	public static void main(String[] args) throws Exception {
+		//setPetAnimal();
+		BufferedImage captureScreen = captureScreen(0, 0, 500, 500);
+		String name="";
+		File f=new File(name);
+        System.out.println("Save File-"+name);
+        //将screenshot对象写入图像文件
+        ImageIO.write(captureScreen, name, f);
+		
 	}
 	
 	/**
