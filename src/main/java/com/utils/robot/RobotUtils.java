@@ -54,6 +54,7 @@ public class RobotUtils {
 			//宠物
 			//setPetAnimal();
 		 
+			setFishing();
 		  
 	}
 	
@@ -94,19 +95,23 @@ public class RobotUtils {
 	 * @throws Exception 
 	 */
 	static void setFishing() throws Exception{
-		getInstance();
 		//睡眠一段时间/毫秒
 		robot.delay(3000);
 		while(true) {
-			if(isInArea(1000, 400, 400, 400)) {
+			if(isInArea(0, 0, 1000, 1000)) {
 				//点击选择
+				System.out.println("点击选择");
 				mousePressLeft();
 				
 				//前滚一步,甩鱼竿
+				System.out.println("甩鱼竿");
 				robot.mouseWheel(1);
+				//停一秒,等待动画
+				robot.delay(RandomUtils.nextInt(1000, 1500));
 				
 				//是否有鱼上钩
 				//查找鱼漂位置
+				System.out.println("查找鱼漂位置");
 				ImageFinder finder = ScreenImageFinder.getFinder();
 				BufferedImage search = ImageIO.read(Application.class.getClassLoader().getResourceAsStream("qq.png"));
 				List<Coordinate> coordinateList = finder.match(search, 0.99);
@@ -114,12 +119,15 @@ public class RobotUtils {
 				if(coordinateList.size()>0) {
 					Coordinate coordinate = coordinateList.get(0);
 					//移到鱼鳔位置
+					System.out.println("移到鱼鳔位置:"+coordinate.getX()+ "--" +coordinate.getY());
 					mouseMove(coordinate.getX(), coordinate.getY());
 					//比较鱼漂变化
+					System.out.println("比较鱼漂变化:");
 					boolean isOk = compareCork(coordinate.getX(), coordinate.getY());
 					if(isOk) {
 						//右键点击自动拾取
-						mousePressRight();
+						System.out.println("点击自动拾取:");
+						mousePressLeft();
 					}
 				}
 			}
