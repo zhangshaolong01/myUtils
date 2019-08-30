@@ -46,9 +46,47 @@ public class ImgSimilarity {
 		System.out.println("相似度:" + similarity + "%");
 		return similarity;
 	}
+	
+	public static double getSimilarity(BufferedImage imageFile1, BufferedImage file2) throws IOException {
+		int[] pixels1 = getImgFinger(imageFile1);
+		int[] pixels2 = getImgFinger(file2);
+		// 获取两个图的汉明距离（假设另一个图也已经按上面步骤得到灰度比较数组）
+		int hammingDistance = getHammingDistance(pixels1, pixels2);
+		// 通过汉明距离计算相似度，取值范围 [0.0, 1.0]
+		double similarity = calSimilarity(hammingDistance) * 100;
+		System.out.println("相似度:" + similarity + "%");
+		return similarity;
+	}
 
+	/**
+	 * 1
+	 * @param imageFile
+	 * @return
+	 * @throws IOException
+	 */
 	private static int[] getImgFinger(File imageFile) throws IOException {
 		Image image = ImageIO.read(imageFile);
+		// 转换至灰度
+		image = toGrayscale(image);
+		// 缩小成32x32的缩略图
+		image = scale(image);
+		// 获取灰度像素数组
+		int[] pixels1 = getPixels(image);
+		// 获取平均灰度颜色
+		int averageColor = getAverageOfPixelArray(pixels1);
+		// 获取灰度像素的比较数组（即图像指纹序列）
+		pixels1 = getPixelDeviateWeightsArray(pixels1, averageColor);
+		return pixels1;
+	}
+	
+	/**
+	 * 2
+	 * @param captureScreen
+	 * @return
+	 * @throws IOException
+	 */
+	private static int[] getImgFinger(BufferedImage captureScreen) throws IOException {
+		Image image = captureScreen;
 		// 转换至灰度
 		image = toGrayscale(image);
 		// 缩小成32x32的缩略图

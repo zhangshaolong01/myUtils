@@ -6,13 +6,23 @@ import java.awt.Point;
 import java.awt.PointerInfo;
 import java.awt.Rectangle;
 import java.awt.Robot;
+import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
 import org.apache.commons.lang3.RandomUtils;
+
+import com.zero.scvzerng.Application;
+import com.zero.scvzerng.ImageFinder;
+import com.zero.scvzerng.ScreenImageFinder;
+import com.zero.scvzerng.entity.Coordinate;
 /**
  * wow 助手
  * @author zhangshaolong
@@ -20,6 +30,8 @@ import org.apache.commons.lang3.RandomUtils;
  */
 public class RobotUtils {
 	
+	public static final String HYPHENS_DATE = "yyyy-MM-dd";
+	private static final String FORMAT = "jpg";
 	private static Robot robot;
 	
 	private RobotUtils(){
@@ -33,16 +45,16 @@ public class RobotUtils {
 		}
 		return robot;
 	}
-
+	/**
+     * yyyy-MM-dd
+     */
 	public static void main(String[] args) throws Exception {
-		//setPetAnimal();
-		BufferedImage captureScreen = captureScreen(0, 0, 500, 500);
-		String name="";
-		File f=new File(name);
-        System.out.println("Save File-"+name);
-        //将screenshot对象写入图像文件
-        ImageIO.write(captureScreen, name, f);
-		
+			//初始化root  
+			getInstance();
+			//宠物
+			//setPetAnimal();
+		 
+		  
 	}
 	
 	/**
@@ -53,15 +65,15 @@ public class RobotUtils {
 	 * @throws AWTException 
 	 */
 	static void setPetAnimal() throws AWTException{
-		getInstance();
 		//睡眠一段时间/毫秒
 		robot.delay(3000);
 		
 		boolean flag = true;
+		int i = 0;
 		while(true) {
-			if(isInArea(1000, 400, 400, 400)) {
+			if(isInArea(0, 0, 1400, 1400)) {
 				//点击选择
-				mousePressLeft();
+				//mousePressLeft();
 				flag = flag?false:true;
 				if(flag) {
 					//前滚一步
@@ -69,6 +81,7 @@ public class RobotUtils {
 				}else {
 					//后滚一步
 					robot.mouseWheel(-1);
+					System.out.println(i++);
 				}
 			}
 			robot.delay(RandomUtils.nextInt(1500, 3000));
@@ -78,13 +91,12 @@ public class RobotUtils {
 	
 	/**
 	 * 钓鱼
-	 * @throws AWTException
+	 * @throws Exception 
 	 */
-	static void setFishing() throws AWTException{
+	static void setFishing() throws Exception{
 		getInstance();
 		//睡眠一段时间/毫秒
 		robot.delay(3000);
-		
 		while(true) {
 			if(isInArea(1000, 400, 400, 400)) {
 				//点击选择
@@ -94,14 +106,63 @@ public class RobotUtils {
 				robot.mouseWheel(1);
 				
 				//是否有鱼上钩
+				//查找鱼漂位置
+				ImageFinder finder = ScreenImageFinder.getFinder();
+				BufferedImage search = ImageIO.read(Application.class.getClassLoader().getResourceAsStream("qq.png"));
+				List<Coordinate> coordinateList = finder.match(search, 0.99);
+				//coordinateList.stream().findAny().ifPresent(coordinate -> System.out.println(String.format("find help image x:%d,y:%d", coordinate.getX(), coordinate.getY())));
+				if(coordinateList.size()>0) {
+					Coordinate coordinate = coordinateList.get(0);
 					//移到鱼鳔位置
-					mouseMove(500,200);
+					mouseMove(coordinate.getX(), coordinate.getY());
+					//比较鱼漂变化
+					boolean isOk = compareCork(coordinate.getX(), coordinate.getY());
+					if(isOk) {
 						//右键点击自动拾取
 						mousePressRight();
+					}
+				}
 			}
-			robot.delay(RandomUtils.nextInt(1500, 3000));
+			robot.delay(RandomUtils.nextInt(2000, 3000));
 		}
 	}
+	
+	
+	/**
+	 * 鱼漂比较
+	 * @return
+	 * @throws Exception 
+	 */
+	static boolean compareCork(int x, int y) throws Exception{
+		  BufferedImage firstImage = null;;
+		  while(true) {
+			  BufferedImage captureScreen = captureScreen(x-50, y-50, x+50, y+50);
+			  if(firstImage != null) {
+				  long before = System.currentTimeMillis();
+				  double similarity = ImgSimilarity.getSimilarity(firstImage,captureScreen);
+				  long after = System.currentTimeMillis();
+				  System.out.println("图片比较时间: "+ (after - before)/1000);
+				  if(similarity > 98) {
+					  return true;
+				  }
+			  }else {
+				  firstImage = captureScreen;
+			  }
+			  //等待间隔时间
+			  robot.delay(500);
+		  }
+	}
+	
+	/**
+	 * 保存图片到本地
+	 * @throws IOException 
+	 */
+	static void saveImage(BufferedImage image, String path) throws IOException{
+		  File f = new File(path); 
+		  //将image对象写入图像文件
+		  ImageIO.write(image, FORMAT, f);
+	}
+	
 	
 	/**
 	 * 按左键
