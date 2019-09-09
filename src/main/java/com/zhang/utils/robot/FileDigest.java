@@ -21,7 +21,7 @@ public class FileDigest {
 	 * @param file
 	 * @return
 	 */
-	public static String getFileMD5(File file) {
+	public static String getFileMd5(File file) {
 		if (!file.isFile()) {
 			return null;
 		}
@@ -51,20 +51,20 @@ public class FileDigest {
 	 * @param listChild ;true递归子目录中的文件
 	 * @return
 	 */
-	public static Map<String, String> getDirMD5(File file, boolean listChild) {
+	public static Map<String, String> getDirMd5(File file, boolean listChild) {
 		if (!file.isDirectory()) {
 			return null;
 		}
 		//<filepath,md5>
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<String, String>(16);
 		String md5;
-		File files[] = file.listFiles();
+		File[] files = file.listFiles();
 		for (int i = 0; i < files.length; i++) {
 			File f = files[i];
 			if (f.isDirectory() && listChild) {
-				map.putAll(getDirMD5(f, listChild));
+				map.putAll(getDirMd5(f, listChild));
 			} else {
-				md5 = getFileMD5(f);
+				md5 = getFileMd5(f);
 				if (md5 != null) {
 					map.put(f.getPath(), md5);
 				}
@@ -79,7 +79,7 @@ public class FileDigest {
 		String s = file1.getPath();
 		File file2 = new File(
 				"C:\\Users\\zhangshaolong\\Pictures\\壁纸\\8fea5f509873775c51f4cf4bccc490f5_r.jpeg");
-		System.out.println(getFileMD5(file1).equals(getFileMD5(file2)));
+		System.out.println(getFileMd5(file1).equals(getFileMd5(file2)));
 		System.out.println(s);
 	}
 }

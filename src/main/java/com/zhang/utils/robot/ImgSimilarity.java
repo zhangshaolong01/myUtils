@@ -18,7 +18,11 @@ import javax.imageio.ImageIO;
  *
  */
 public class ImgSimilarity {
-	// 全流程
+	/**
+	 * 全流程
+	 * @param args
+	 * @throws IOException
+	 */
 	public static void main(String[] args) throws IOException {
 		// 获取图像
 		File imageFile1 = new File(
@@ -100,7 +104,11 @@ public class ImgSimilarity {
 		return pixels1;
 	}
 
-	// 将任意Image类型图像转换为BufferedImage类型，方便后续操作
+	/**
+	 * 将任意Image类型图像转换为BufferedImage类型，方便后续操作
+	 * @param srcImage
+	 * @return
+	 */
 	public static BufferedImage convertToBufferedFrom(Image srcImage) {
 		BufferedImage bufferedImage = new BufferedImage(srcImage.getWidth(null), srcImage.getHeight(null),
 				BufferedImage.TYPE_INT_ARGB);
@@ -110,7 +118,11 @@ public class ImgSimilarity {
 		return bufferedImage;
 	}
 
-	// 转换至灰度图
+	/**
+	 * 转换至灰度图
+	 * @param image
+	 * @return
+	 */
 	public static BufferedImage toGrayscale(Image image) {
 		BufferedImage sourceBuffered = convertToBufferedFrom(image);
 		ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
@@ -119,13 +131,21 @@ public class ImgSimilarity {
 		return grayBuffered;
 	}
 
-	// 缩放至32x32像素缩略图
+	/**
+	 * 缩放至32x32像素缩略图
+	 * @param image
+	 * @return
+	 */
 	public static Image scale(Image image) {
 		image = image.getScaledInstance(32, 32, Image.SCALE_SMOOTH);
 		return image;
 	}
 
-	// 获取像素数组
+	/**
+	 * 获取像素数组
+	 * @param image
+	 * @return
+	 */
 	public static int[] getPixels(Image image) {
 		int width = image.getWidth(null);
 		int height = image.getHeight(null);
@@ -133,7 +153,11 @@ public class ImgSimilarity {
 		return pixels;
 	}
 
-	// 获取灰度图的平均像素颜色值
+	/**
+	 * 获取灰度图的平均像素颜色值
+	 * @param pixels
+	 * @return
+	 */
 	public static int getAverageOfPixelArray(int[] pixels) {
 		Color color;
 		long sumRed = 0;
@@ -145,7 +169,12 @@ public class ImgSimilarity {
 		return averageRed;
 	}
 
-	// 获取灰度图的像素比较数组（平均值的离差）
+	/**
+	 * 获取灰度图的像素比较数组（平均值的离差）
+	 * @param pixels
+	 * @param averageColor
+	 * @return
+	 */
 	public static int[] getPixelDeviateWeightsArray(int[] pixels, final int averageColor) {
 		Color color;
 		int[] dest = new int[pixels.length];
@@ -156,7 +185,12 @@ public class ImgSimilarity {
 		return dest;
 	}
 
-	// 获取两个缩略图的平均像素比较数组的汉明距离（距离越大差异越大）
+	/**
+	 * 获取两个缩略图的平均像素比较数组的汉明距离（距离越大差异越大）
+	 * @param a
+	 * @param b
+	 * @return
+	 */
 	public static int getHammingDistance(int[] a, int[] b) {
 		int sum = 0;
 		for (int i = 0; i < a.length; i++) {
@@ -165,7 +199,11 @@ public class ImgSimilarity {
 		return sum;
 	}
 
-	// 通过汉明距离计算相似度
+	/**
+	 * 通过汉明距离计算相似度
+	 * @param hammingDistance
+	 * @return
+	 */
 	public static double calSimilarity(int hammingDistance) {
 		int length = 32 * 32;
 		double similarity = (length - hammingDistance) / (double) length;
