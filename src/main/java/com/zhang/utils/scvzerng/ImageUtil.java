@@ -13,12 +13,11 @@ public class ImageUtil {
                 minHeigth = image.getMinY();
 
         int[][] rgbs = new int[width][height];
-        for(int x=minWidth;x<width;x++){
-            for(int y=minHeigth;y<height;y++){
+        for(int x = minWidth; x < width; x++){
+            for(int y = minHeigth; y < height; y++){
                 rgbs[x][y] = image.getRGB(x,y);
             }
         }
-
         return rgbs;
     }
 }

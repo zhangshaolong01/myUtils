@@ -26,9 +26,9 @@ public class ImgSimilarity {
 	public static void main(String[] args) throws IOException {
 		// 获取图像
 		File imageFile1 = new File(
-				"C:\\Users\\zhangshaolong\\Pictures\\壁纸\\63ea1b239f2318c850603552567ef8b0_r.png");
+				"C:\\Users\\zhangshaolong\\git\\myUtils\\src\\main\\resources\\fish.png");
 		File file2 = new File(
-				"C:\\Users\\zhangshaolong\\Pictures\\壁纸\\8fea5f509873775c51f4cf4bccc490f5_r.jpeg");
+				"C:\\Users\\zhangshaolong\\Desktop\\QQ截图20190911151519.png");
 		
 		int i = 0;
 		while(i < 10) {
