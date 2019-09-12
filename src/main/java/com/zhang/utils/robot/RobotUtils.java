@@ -64,15 +64,18 @@ public class RobotUtils {
 	 */
 	static void setPetAnimal() throws AWTException {
 		// 初始化root
+		log.info("初始化Robot");
 		RobotUtils.getInstance();
 		// 守护线程
+		log.info("启动守护线程");
 		ThreadPetAnimal thread = new ThreadPetAnimal();
+		thread.setDaemon(true);
 		thread.start();
 		// 睡眠一段时间/毫秒
 		robot.delay(3000);
 
 		boolean flag = true;
-		int i = 0;
+		int i = 1;
 		while (true) {
 			if (isInArea(WIDTH - 500 , HEIGHT - 350, WIDTH, HEIGHT)) {
 				flag = flag ? false : true;
@@ -82,10 +85,10 @@ public class RobotUtils {
 				} else {
 					// 后滚一步
 					robot.mouseWheel(-1);
-					System.out.println("鼠标滚动次数 = " + ++i);
+					System.out.println(i++);
 				}
 			}
-			robot.delay(RandomUtils.nextInt(500, 800));
+			robot.delay(RandomUtils.nextInt(50, 80));
 		}
 	}
 

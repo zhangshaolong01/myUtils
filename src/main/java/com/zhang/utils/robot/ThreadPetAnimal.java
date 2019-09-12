@@ -5,6 +5,11 @@ import java.awt.Point;
 import java.awt.PointerInfo;
 import java.util.logging.Logger;
 
+/**
+ * 守护线程
+ * @author zhangshaolong
+ *
+ */
 public class ThreadPetAnimal extends Thread {
 	static Logger log = Logger.getLogger(ThreadPetAnimal.class.getName());
 
