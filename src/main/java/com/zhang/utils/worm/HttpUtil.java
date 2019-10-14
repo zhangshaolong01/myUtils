@@ -37,7 +37,7 @@ public class HttpUtil {
 	
 	
 	public static void main(String[] args) {
-		String path = "https://edu.51cto.com/center/course/lesson/index?id=370719";
+		String path = "http://db.178.com/wow/cn/battlepet/39.html";
 		
 		System.out.println(get(path));
 	}

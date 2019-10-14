@@ -2,6 +2,7 @@ package com.zhang.utils.txt;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -10,8 +11,14 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.poi.ss.usermodel.Workbook;
+
+import com.zhang.utils.file.IOSave;
+import com.zhang.utils.offce.ExcelUtils;
 
 public class ModifyTXT {
  
@@ -27,8 +34,8 @@ public class ModifyTXT {
 		//String path = "E:\\eclipse\\oxygen_2\\hecsp\\hecsp-app\\app-service\\gw-ec-app-nurse";
 		//String path = "E:\\eclipse\\oxygen_2\\hecsp\\hecsp-app\\app-service\\gw-ec-app-nurse\\src\\main\\java\\com\\bjgoodwill\\nurse\\pcw\\dao\\ibatis";
 		//String path = "E:\\eclipse\\oxygen_2\\hecsp\\hecsp-web\\hecsp-core";
-		String path = "E:\\eclipse\\oxygen_2\\hecsp";
-		
+		//String path = "E:\\eclipse\\oxygen_2\\hecsp";
+		String path = "E:\\eclipse\\inst_gsjy2\\hecsp";
 		
 		List<File> fileList = new ArrayList<>();
 		Map<String,String> urlMap = new HashMap<>();
@@ -40,8 +47,9 @@ public class ModifyTXT {
 		
 		fileList.clear();
 		//getFileList(fileList,path,"Action.java");
-		//getFileList(fileList,path,"Controller.java");
-		getFileList(fileList,path,"action.xml");
+		getFileList(fileList,path,"Controller.java");
+		//getFileList(fileList,path,"action.xml");
+		List<Map<String,String>> allList = new ArrayList<Map<String,String>>();
 		for (File file : fileList) {
 			String name = file.getName();
 			String pathUrl = "";
@@ -52,9 +60,22 @@ public class ModifyTXT {
 					pathUrl = urlMap.get(name);
 				}
 			}
-			updadeTxt(file,pathUrl);
-			System.out.println("删除="+file.getName());
-			file.delete();
+			//updadeTxt(file,pathUrl);
+			//System.out.println("删除="+file.getName());
+			//file.delete();
+			
+			List<Map<String,String>> list = getInterface(file);
+			allList.addAll(list);
+		}
+		
+		try {
+			Workbook wb = ExcelUtils.writeExcel(allList);
+	        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	        wb.write(bos);
+	        bos.close();
+			IOSave.ByteArrayToFile(bos.toByteArray(), "C:\\Users\\zhangshaolong\\Desktop\\新版\\接口列表.xlsx");
+		} catch (Exception e) {
+			
 		}
 		System.out.println("---------执行结束-----------");
 	}
@@ -97,7 +118,8 @@ public class ModifyTXT {
 			//List<String> list = updateDetail_1(reader,pathUrl);
 			//List<String> list = updateDetail_2(reader,pathUrl);
 			List<String> list = updateDetail_3(reader,pathUrl);
-			writeTxt_1(file.getAbsolutePath(), list);
+			//writeTxt_1(file.getAbsolutePath(), list);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally {
@@ -110,6 +132,77 @@ public class ModifyTXT {
 			}
 		}
 	}
+	
+	
+	public static List<Map<String, String>> getInterface(File file){
+		List<Map<String, String>> list = new ArrayList<Map<String,String>>(); 
+		BufferedReader reader = null;
+		try {
+			//打开文件
+			reader = new BufferedReader(new InputStreamReader(new FileInputStream(file),"utf-8"));
+			//按行读取文件
+	        String line = null;
+	        //
+	        String controller = null;
+	        List<String> path = new ArrayList<String>();
+	        List<String> method = new ArrayList<String>();
+	        
+			while ((line = reader.readLine()) != null) {
+				String trimStr = line.trim();
+	            if (trimStr.length() == 0) {
+	                continue;
+	            }
+	            
+	            if (trimStr.startsWith("public class")) {
+	            	controller = trimStr.substring(trimStr.indexOf("public class ") + 13, trimStr.indexOf("extends") - 1);
+	            }else {
+	            	if (trimStr.contains("public") && trimStr.contains("{") && !trimStr.contains("static")) {
+	            		if(trimStr.contains("public ResponseEntity<byte[]>")) {
+	            			method.add(trimStr.substring(trimStr.indexOf("public ResponseEntity<byte[]>") + 30, trimStr.indexOf("(")));
+	            		}else {
+	            			method.add(trimStr.substring(trimStr.indexOf("public String") + 14, trimStr.indexOf("(")));
+	            		}
+		            }
+	            }
+	            
+	            if (trimStr.startsWith("@PostMapping") || trimStr.startsWith("@RequestMapping")) {
+	            	if(trimStr.contains("@PostMapping")) {
+	            		path.add(trimStr.substring(trimStr.indexOf("@PostMapping") + 14, trimStr.indexOf(")") - 1));
+	            	}else {
+	            		if(trimStr.contains("@RequestMapping")) {
+	            			path.add(trimStr.substring(trimStr.indexOf("@RequestMapping") + 17, trimStr.indexOf(")") - 1));
+	            		}
+	            	}
+	            }
+			}
+			
+			
+			if(path.size() == method.size()) {
+				for (int i = 0; i < path.size(); i++) {
+					Map<String, String> map = new LinkedHashMap<>();
+					map.put("controller", controller);
+					map.put("method", method.get(i));
+					map.put("path", path.get(i));
+					list.add(map);
+				}
+			}else {
+				System.err.println("对不上"+controller);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				if(reader!=null) {
+					reader.close();
+				}
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		return list;
+	}
+	
 	
 	
 	/**
@@ -145,6 +238,7 @@ public class ModifyTXT {
 			}
 		}
 	}
+	
 	public static void writeTxt_1(String path,List<String> lineList){
 		BufferedWriter bw = null;
 		try {

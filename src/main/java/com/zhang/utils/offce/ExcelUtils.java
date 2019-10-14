@@ -1,25 +1,52 @@
 package com.zhang.utils.offce;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JsonConfig;
+import com.zhang.utils.file.IOSave;
 
 public class ExcelUtils {
-	
+	private final static Logger log = LoggerFactory.getLogger(ExcelUtils.class);
+
 	public static void main(String[] args) throws IOException {
-		File file = new File("C:\\Users\\zhangshaolong\\Desktop\\国寿嘉园二期\\users.xlsx");
-		readExcel(file);
+		//File file = new File("C:\\Users\\zhangshaolong\\Desktop\\小宠物列表.xlsx");
+		//readExcel(file);
+		
+		List list = new ArrayList<>();
+		
+		Map map = new HashMap();
+		map.put("1", "haha");
+		map.put("2", "gege");
+		list.add(map);
+		Workbook wb = writeExcel(list);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        wb.write(bos);
+        bos.close();
+		IOSave.ByteArrayToFile(bos.toByteArray(), "C:\\Users\\zhangshaolong\\Desktop\\新版\\接口列表.xlsx");
 	}
 
 	/**
@@ -33,66 +60,146 @@ public class ExcelUtils {
 		 * 这里根据不同的excel类型 可以选取不同的处理类： 1.XSSFWorkbook 2.HSSFWorkbook
 		 */
 		// 获得工作簿
+		log.debug("==> 开始读取Excel文件;");
 		XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(file));
-
-		// 获得工作表
-		XSSFSheet sheet = workbook.getSheetAt(0);
-
-		int rows = sheet.getPhysicalNumberOfRows();
-
-		List<GsEmployee> empList = new ArrayList<GsEmployee>();
+		int sheetNum = workbook.getNumberOfSheets();
+		log.debug("==> 工作表数量:" + sheetNum);
+		List<Pet> petList = new ArrayList<Pet>();
+		for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
+			Sheet sheet = workbook.getSheetAt(sheetIndex);
+			if (sheet == null || sheet.getLastRowNum() == 0) {
+				continue;
+			}
+			log.debug("==> 读取工作表,索引:" + sheetIndex + ",名称:" + sheet.getSheetName());
+			petList.addAll(excelToBean(sheet));
+		}
+		log.debug("==> 结束读取Excel文件;");
 		
-		for (int i = 0; i < rows; i++) {
-			// 获取第i行数据
-			XSSFRow sheetRow = sheet.getRow(i);
-			// 获取第0格数据
-			XSSFCell id = sheetRow.getCell(0);
-			XSSFCell userName = sheetRow.getCell(1);
-			XSSFCell empName = sheetRow.getCell(2);
-			XSSFCell projectId = sheetRow.getCell(3);
-			XSSFCell projectName = sheetRow.getCell(4);
-			
-			// 调用toString方法获取内容
-			/*
-			 * System.out.println(id); System.out.println(userName);
-			 * System.out.println(empName); System.out.println(projectId);
-			 * System.out.println(projectName);
-			 */
-			
-			
-			GsInstitution institution = new GsInstitution();
-			institution.setInstitutionId(projectId.getStringCellValue());
-			institution.setInstitutionName(projectName.getStringCellValue());
-			
-			List<GsInstitution> orgList = new ArrayList<>();
-			orgList.add(institution);
-			
-			GsEmployee employee = new GsEmployee();
-			employee.setEmployeeNo(id.getStringCellValue());
-			employee.setEmployeeName(empName.getStringCellValue());
-			employee.setUseraccount(userName.getStringCellValue());
-			employee.setDepartId("0");
-			employee.setSex("0");
-			employee.setInstitutionIds(orgList);
-			employee.setOperateStatus("1");
-			
-			if(empList.size()>0) {
-				GsEmployee gsEmployee = empList.get(empList.size()-1);
-				if(employee.getEmployeeNo().equals(gsEmployee.getEmployeeNo())) {
-					gsEmployee.getInstitutionIds().add(institution);
+		System.out.println(petList.size());
+		for (Pet pet : petList) {
+			//JSONArray fromObject = JSONArray.fromObject(pet);
+			System.out.println(pet.toString());
+		}
+	}
+
+	
+	public static Workbook writeExcel(List<Map<String,String>> dataList) throws FileNotFoundException, IOException {
+		log.debug("==> 开始创建工作簿;");
+        XSSFWorkbook wb = new XSSFWorkbook();
+
+        log.debug("==> 创建工作表:");
+        XSSFSheet sheet = wb.createSheet();
+
+        for (int i = 0; i < dataList.size(); i++) {
+        	 log.debug("==> 创建表表头,索引为0");
+             XSSFRow row = sheet.createRow(i);
+             row.setHeightInPoints(25);
+             
+             Map<String,String> map = dataList.get(i);
+             int j = 0;
+             for(String value : map.values()){
+        	    XSSFCell dataCell = row.createCell(j);
+        	    dataCell.setCellType(CellType.STRING);
+        	    dataCell.setCellValue(value);
+        	    j++;
+        	}
+		}
+        log.debug("==> 结束创建工作簿;");
+        return wb;
+		
+	}
+	
+	
+	
+	
+	static List<Pet> excelToBean(Sheet sheet) {
+		log.debug("==> 开始读取工作表;");
+		List<String[]> rowDataList = new ArrayList<>();//行数据集合
+		log.debug("==> 工作表,名称:" + sheet.getSheetName());
+        //工作表行数为零，返回空数组
+        if (sheet.getLastRowNum() == 0) {
+            log.debug("==> 工作表行数为零，返回空数组;");
+            return new ArrayList<Pet>();
+        }
+		for (Row row : sheet) {
+            if (row == null || row.getLastCellNum() == 0) {
+                continue;
+            }
+            log.debug("==> 行:" + row.getRowNum() + ",列数:" + row.getLastCellNum());
+            String[] rowData = new String[row.getLastCellNum()];
+            for (int i = 0; i < row.getLastCellNum(); i++) {
+                Cell cell = row.getCell(i);
+                String cellData = "";
+                if (cell == null) {
+                    cellData = "";
+                } else {
+                    switch (cell.getCellTypeEnum()) {
+                        case STRING:
+                            cellData = cell.getRichStringCellValue().getString();
+                            break;
+                        case NUMERIC:
+                            if (DateUtil.isCellDateFormatted(cell)) {
+                                Date date = cell.getDateCellValue();
+                                if (date != null) {
+                                    cellData = new SimpleDateFormat("yyyy-MM-dd").format(date);
+                                } else {
+                                    cellData = "";
+                                }
+                            } else {
+                                cellData = new DecimalFormat("0").format(cell.getNumericCellValue());
+                            }
+                            break;
+                        case BOOLEAN:
+                            cellData = String.valueOf(cell.getBooleanCellValue());
+                            break;
+                        case FORMULA:
+                            cellData = String.valueOf(cell.getNumericCellValue());
+                            break;
+                        default:
+                            cellData = "";
+                    }
+                }
+                rowData[i] = cellData;
+            }
+            rowDataList.add(rowData);
+        }
+		log.debug("==> 结束读取工作表;");
+		
+		List<Pet> petList = new ArrayList<Pet>();
+		for (int i = 1; i < rowDataList.size(); i++) {
+			String[] row = rowDataList.get(i);
+			try {
+				if(StringUtils.isBlank(row[0]) && StringUtils.isBlank(row[1])) {
 					continue;
-				}else {
-					empList.add(employee);
 				}
-			}else {
-				empList.add(employee);
+				Pet pet = new Pet();
+				pet.setItemId(row[0]);// 物品id
+				pet.setPetId(row[1]);// 宠物id
+				pet.setPetType(row[2]);// 类型
+				pet.setPetNameCn(row[3]);// 中文名
+				pet.setPetNameTd(row[4]);// 繁体名
+				pet.setPetNameEn(row[5]);// 英文名
+				pet.setIsCage(row[6]);// 装笼
+				pet.setSourceType(row[7]);// 来源类型
+				pet.setProfessionalType(row[8]);// 专业类型
+				pet.setAcquisitionMethod(row[9]);// 获取来源
+				pet.setItemNameCn(row[10]);// 物品名
+				pet.setItemNameTd(row[11]);// 物品繁体名
+				pet.setItemNameEn(row[12]);// 物品英文名
+				pet.setCamp(row[13]);// 阵营
+				pet.setIsOnly(row[14]);// 是否唯一
+				pet.setPrice(row[15]);// 售价
+				pet.setPriceUnit("");// 价格单位
+				pet.setAddedVersion(row[16]);// 加入版本
+				pet.setMemo(row[17]);// 备注
+
+				petList.add(pet);
+			} catch (ArrayIndexOutOfBoundsException e) {
+				log.error(e.getMessage());
 			}
 		}
-		
-		for (GsEmployee gsEmployee : empList) {
-			JSONArray fromObject = JSONArray.fromObject(gsEmployee);
-			System.out.println(fromObject.toString());
-		}
+		System.out.println(petList.size());
+		return petList;
 	}
 
 }

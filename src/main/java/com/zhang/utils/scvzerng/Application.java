@@ -15,7 +15,7 @@ import com.zhang.utils.scvzerng.entity.Coordinate;
 public class Application {
     public static void main(String[] args) throws IOException {
         ImageFinder finder = ScreenImageFinder.getFinder();
-        BufferedImage search = ImageIO.read(Application.class.getClassLoader().getResourceAsStream("fish.png"));
+        BufferedImage search = ImageIO.read(Application.class.getClassLoader().getResourceAsStream("QQ截图20190925133006.png"));
         long start = System.currentTimeMillis();
         List<Coordinate> coordinateList = finder.match(search,0.99);
         System.out.println("耗时:"+(System.currentTimeMillis()-start));

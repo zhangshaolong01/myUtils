@@ -19,6 +19,7 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.lang3.RandomUtils;
 
+import com.xnx3.robot.support.CoordBean;
 import com.zhang.utils.scvzerng.Application;
 import com.zhang.utils.scvzerng.ImageFinder;
 import com.zhang.utils.scvzerng.ScreenImageFinder;
@@ -66,18 +67,14 @@ public class RobotUtils {
 		// 初始化root
 		log.info("初始化Robot");
 		RobotUtils.getInstance();
-		// 守护线程
-		log.info("启动守护线程");
-		ThreadPetAnimal thread = new ThreadPetAnimal();
-		thread.setDaemon(true);
-		thread.start();
 		// 睡眠一段时间/毫秒
-		robot.delay(3000);
+		robot.delay(1000);
 
 		boolean flag = true;
-		int i = 1;
+		int i = 1,j = 1;
 		while (true) {
-			if (isInArea(WIDTH - 500 , HEIGHT - 350, WIDTH, HEIGHT)) {
+			j++;i++;
+			//if (isInArea(WIDTH - 500 , HEIGHT - 350, WIDTH, HEIGHT)) {
 				flag = flag ? false : true;
 				if (flag) {
 					// 前滚一步
@@ -85,10 +82,21 @@ public class RobotUtils {
 				} else {
 					// 后滚一步
 					robot.mouseWheel(-1);
-					System.out.println(i++);
+					System.out.println("i =" + i + ",j = " + j);
 				}
+			//}
+			robot.delay(RandomUtils.nextInt(500, 700));
+			
+			if(j == 300) {
+				if(isLoginOut()) {
+					System.out.println("程序已退出!");
+					while(true) {
+						Toolkit.getDefaultToolkit().beep(); //发出一个音频嘟嘟声
+						robot.delay(1000);
+					}
+				}
+				j = 1;
 			}
-			robot.delay(RandomUtils.nextInt(50, 80));
 		}
 	}
 
@@ -167,6 +175,21 @@ public class RobotUtils {
 		}
 	}
 
+	//登出提醒
+	static boolean isLoginOut(){
+		long t1 = System.currentTimeMillis();
+		
+		com.xnx3.robot.Robot robot = new com.xnx3.robot.Robot();
+		robot.setSourcePath(ImageSearchUtils.class); // 设置此处是为了让程序能自动找到要搜索的图片文件。图片文件在当前类下的res文件夹内
+		// 在当前屏幕上搜索search.png图片，看起是否存在
+		List<CoordBean> list = robot.imageSearch("search.png", com.xnx3.robot.Robot.SIM_BLUR);
+		
+		long t2 = System.currentTimeMillis();
+		System.out.println("Used time: " + (t2 - t1));
+		return list.size() > 0;
+	}
+	
+	
 	/**
 	 * 保存图片到本地
 	 * 

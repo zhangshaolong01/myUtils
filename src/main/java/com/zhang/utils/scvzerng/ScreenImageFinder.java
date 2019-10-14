@@ -8,11 +8,9 @@ import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.zhang.utils.robot.ImgSimilarity;
 import com.zhang.utils.scvzerng.entity.ColorBlock;
 import com.zhang.utils.scvzerng.entity.Coordinate;
 
