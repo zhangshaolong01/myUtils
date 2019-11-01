@@ -22,7 +22,7 @@ import com.zhang.utils.offce.ExcelUtils;
 
 public class ModifyTXT {
  
-	public static void main(String[] args) {
+	public static void main(String[] args) { 
 		System.out.println("---------执行开始-----------");
 		//String path = "D:\\Workspaces\\aa";	//要遍历的路径
 		//String path = "E:\\eclipse\\oxygen_2\\wooh-basic";
@@ -35,7 +35,21 @@ public class ModifyTXT {
 		//String path = "E:\\eclipse\\oxygen_2\\hecsp\\hecsp-app\\app-service\\gw-ec-app-nurse\\src\\main\\java\\com\\bjgoodwill\\nurse\\pcw\\dao\\ibatis";
 		//String path = "E:\\eclipse\\oxygen_2\\hecsp\\hecsp-web\\hecsp-core";
 		//String path = "E:\\eclipse\\oxygen_2\\hecsp";
-		String path = "E:\\eclipse\\inst_gsjy2\\hecsp";
+		String path = "E:\\eclipse\\inst\\hecsp";
+		
+		String appCommon = "E:\\eclipse\\inst\\hecsp\\hecsp-app\\app-service\\gw-ec-app-common";
+		String appCustomer = "E:\\eclipse\\inst\\hecsp\\hecsp-app\\app-service\\gw-ec-app-customer";
+		String appFamily = "E:\\eclipse\\inst\\hecsp\\hecsp-app\\app-service\\gw-ec-app-family";
+		String appManager = "E:\\eclipse\\inst\\hecsp\\hecsp-app\\app-service\\gw-ec-app-manager";
+		String appNurse = "E:\\eclipse\\inst\\hecsp\\hecsp-app\\app-service\\gw-ec-app-nurse";
+		String appSupplier = "E:\\eclipse\\inst\\hecsp\\hecsp-app\\app-service\\gw-ec-app-supplier";
+		String appVolunteer = "E:\\eclipse\\inst\\hecsp\\hecsp-app\\app-service\\gw-ec-app-volunteer";
+		String appWorker = "E:\\eclipse\\inst\\hecsp\\hecsp-app\\app-service\\gw-ec-app-worker";
+		
+		String hecspWeb = "E:\\eclipse\\inst\\hecsp\\hecsp-common";
+		
+		String assess = "E:\\eclipse\\inst\\assess";
+		
 		
 		List<File> fileList = new ArrayList<>();
 		Map<String,String> urlMap = new HashMap<>();
@@ -47,7 +61,7 @@ public class ModifyTXT {
 		
 		fileList.clear();
 		//getFileList(fileList,path,"Action.java");
-		getFileList(fileList,path,"Controller.java");
+		getFileList(fileList,assess,"Controller.java");
 		//getFileList(fileList,path,"action.xml");
 		List<Map<String,String>> allList = new ArrayList<Map<String,String>>();
 		for (File file : fileList) {
@@ -73,7 +87,7 @@ public class ModifyTXT {
 	        ByteArrayOutputStream bos = new ByteArrayOutputStream();
 	        wb.write(bos);
 	        bos.close();
-			IOSave.ByteArrayToFile(bos.toByteArray(), "C:\\Users\\zhangshaolong\\Desktop\\新版\\接口列表.xlsx");
+			IOSave.ByteArrayToFile(bos.toByteArray(), "C:\\Users\\zhangshaolong\\Desktop\\新版\\app接口列表.xlsx");
 		} catch (Exception e) {
 			
 		}

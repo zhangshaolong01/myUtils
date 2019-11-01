@@ -63,7 +63,7 @@ public class RobotUtils {
 	 * 
 	 * @throws AWTException
 	 */
-	static void setPetAnimal() throws AWTException {
+	static void setPetAnimalDelay() throws AWTException {
 		// 初始化root
 		log.info("初始化Robot");
 		RobotUtils.getInstance();
@@ -97,6 +97,35 @@ public class RobotUtils {
 				}
 				j = 1;
 			}
+		}
+	}
+	
+	/**
+	 * 滚宠物 向前一步 向后一步 对应宠物字符串的自动化操作
+	 * 
+	 * @throws AWTException
+	 */
+	static void setPetAnimal() throws AWTException {
+		// 初始化root
+		log.info("初始化Robot");
+		RobotUtils.getInstance();
+		// 睡眠一段时间/毫秒
+		robot.delay(1000);
+
+		boolean flag = true;
+		int i = 1;
+		while (true) {
+			flag = flag ? false : true;
+			if (flag) {
+				// 前滚一步
+				robot.mouseWheel(1);
+			} else {
+				// 后滚一步
+				robot.mouseWheel(-1);
+				i++;
+				System.out.println(i);
+			}
+			robot.delay(RandomUtils.nextInt(500, 700));
 		}
 	}
 
