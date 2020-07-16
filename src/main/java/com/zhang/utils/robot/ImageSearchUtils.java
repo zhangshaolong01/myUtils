@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.xnx3.robot.Robot;
 import com.xnx3.robot.support.CoordBean;
-import com.xnx3.robot.support.RGBBean;
+
 
 public class ImageSearchUtils {
 	static java.awt.Robot robot;

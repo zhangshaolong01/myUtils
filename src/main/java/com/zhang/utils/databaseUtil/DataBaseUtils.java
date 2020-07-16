@@ -39,54 +39,33 @@ public class DataBaseUtils {
 		// 加载驱动
 		Class.forName("com.mysql.jdbc.Driver");
 		// 获取链接
-		Connection conn = DriverManager.getConnection("jdbc:mysql://192.168.7.245:3306/zhyl_hecsp", "zhyl", "zhyl@123");
-		String sql = "select id,pet_name_cn  from pet";
-		
-		String sql2= "SELECT DISTINCT\r\n" + 
-				"  any_value(a.activity_id) activity_id,\r\n" + 
-				"  any_value(a.activity_abstract) activity_abstract,\r\n" + 
-				"  any_value(a.activity_address) activity_address,\r\n" + 
-				"  DATE_FORMAT(a.activity_beg_tm,'%Y-%m-%d %H:%i:%s')    activity_beg_tm,\r\n" + 
-				"  any_value(a.activity_code) activity_code,\r\n" + 
-				"  any_value(a.activity_detail) activity_detail,\r\n" + 
-				"  any_value(DATE_FORMAT(a.activity_end_tm,'%Y-%m-%d %H:%i:%s'))    activity_end_tm,\r\n" + 
-				"  any_value(a.activity_master) activity_master,\r\n" + 
-				"  any_value(a.activity_name) activity_name,\r\n" + 
-				"  any_value(a.activity_org_dept_code) activity_org_dept_code,\r\n" + 
-				"  any_value(a.activity_org_dept_name) activity_org_dept_name,\r\n" + 
-				"  any_value(DATE_FORMAT(a.activity_sub_beg_tm,'%Y-%m-%d %H:%i:%s'))    activity_sub_beg_tm,\r\n" + 
-				"  any_value(DATE_FORMAT(a.activity_sub_end_tm,'%Y-%m-%d %H:%i:%s'))    activity_sub_end_tm,\r\n" + 
-				"  any_value(a.activity_summary) activity_summary,\r\n" + 
-				"  any_value(a.activity_type) activity_type,\r\n" + 
-				"  any_value(DATE_FORMAT(a.cancel_time,'%Y-%m-%d %H:%i:%s'))    cancel_time,\r\n" + 
-				"  any_value(a.cancel_user_id) cancel_user_id,\r\n" + 
-				"  any_value(a.depart_code) depart_code,\r\n" + 
-				"  any_value(a.h5_address) h5_address,\r\n" + 
-				"  a.`master_tel`,\r\n" + 
-				"  any_value(a.release_user_id) release_user_id,\r\n" + 
-				"  a.`status`,\r\n" + 
-				"  ''                          action_type,\r\n" + 
-				"  any_value(d.imagePath )                imagePath,\r\n" + 
-				"  '1'                         isPartake\r\n" + 
-				"FROM tb_activity_info a\r\n" + 
-				"  LEFT JOIN (SELECT\r\n" + 
-				"               e.fun_id                     activity_id,\r\n" + 
-				"               GROUP_CONCAT(e.photo_url)    imagePath\r\n" + 
-				"             FROM tb_activity_photo e\r\n" + 
-				"             WHERE e.valid_flag = 0\r\n" + 
-				"             GROUP BY e.fun_id) d\r\n" + 
-				"    ON d.activity_id = a.activity_id\r\n" + 
-				"WHERE IFNULL(a.valid_flag, '0') = '0'\r\n" + 
-				"    AND a.`status` IN(20,30,40,50)\r\n" + 
-				"    AND a.activity_id IN(SELECT\r\n" + 
-				"                           b.activity_id\r\n" + 
-				"                         FROM tb_activity_participator b\r\n" + 
-				"                         WHERE IFNULL(b.valid_flag, '0') = '0'\r\n" + 
-				"                             AND b.institution_id = 'ba2303e74c2c495a999421831944fa6b'\r\n" + 
-				"                             AND b.activity_user_id = '203a84df7d2b48098f571ab378ef24d1')\r\n" + 
-				"GROUP BY a.`status` ASC,a.activity_beg_tm DESC\r\n" + 
-				"\r\n" + 
-				"";
+		//Connection conn = DriverManager.getConnection("jdbc:mysql://192.168.7.245:3306/zhyl_hecsp", "zhyl", "zhyl@123");
+		Connection conn = DriverManager.getConnection("jdbc:mysql://47.95.226.253:3306/zhyl_ec_business_v5", "zhyl", "zhyl@123");
+		//any_value()
+		String sql2= "SELECT\r\n" + 
+				"  a.chg_record_no,\r\n" + 
+				"  a.employee_code,\r\n" + 
+				"  b.employee_name,\r\n" + 
+				"  a.employ_chg_type,\r\n" + 
+				"  a.employ_chg_reason,\r\n" + 
+				"  a.employ_chg_dt,\r\n" + 
+				"  a.original_depart,\r\n" + 
+				"  a.original_post,\r\n" + 
+				"  a.new_depart,\r\n" + 
+				"  a.new_post,\r\n" + 
+				"  a.meno,\r\n" + 
+				"  a.valid_flag,\r\n" + 
+				"  a.update_time     update_time,\r\n" + 
+				"  a.operate_man,\r\n" + 
+				"  a.operate_reason,\r\n" + 
+				"  a.depart_code,\r\n" + 
+				"  a.institution_id\r\n" + 
+				"FROM tb_hr_employer_chg a,\r\n" + 
+				"  tb_employee_info b\r\n" + 
+				"WHERE IFNULL(a.valid_flag,'0') != 1\r\n" + 
+				"    AND a.employee_code = b.employee_code\r\n" + 
+				"ORDER BY a.employee_code, a.update_time DESC\r\n" + 
+				"LIMIT 1";
 		
 		Statement stmt = conn.createStatement();
 		// 执行sql
